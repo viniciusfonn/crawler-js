@@ -1,2 +1,2 @@
 # crawler
-Crawler para Indexação dos Editais
+Crawler para Indexação de editais de fomento de pesquisa
