@@ -40,7 +40,7 @@ crawler.crawl(
                 https.get(page.url, response => response.pipe(file)).on("error", err => console.log("Error: " + err.message));
             }
 
-        })
+        }
 
     });
 
