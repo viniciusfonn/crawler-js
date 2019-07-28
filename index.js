@@ -1,55 +1,46 @@
-var Crawler = require("js-crawler");
+const Crawler = require("js-crawler");
 
-var crawler = new Crawler().configure({
+const https = require('https');
+const fs = require('fs');
+
+const arquivos = [];
+
+const crawler = new Crawler().configure({
     depth: 3,
-    shouldCrawl: function (url) {
-        return url.indexOf("fapergs.rs.gov.br") > 0;
-    },
-    shouldCrawlLinksFrom: function (url) {
-        return url.indexOf("fapergs.rs.gov.br") > 0;
-    }
+    shouldCrawl: url=> url.indexOf("fapergs.rs.gov.br") > 0
+    
 });
-
-var editais = [];
-var arquivos = [];
 
 crawler.crawl(
     "https://fapergs.rs.gov.br/mapa-do-site",
     function onSuccess(page) {
-        if (page.url.toLowerCase().indexOf("/edital-") > 0) {
-            editais.push(page.url);
-
-        }
+     
         if (page.url.toLowerCase().indexOf(".pdf") > 0) {
             arquivos.push({ url: page.url, ref: page.referer });
-
         }
 
     },
     null,
 
-    function onAllFinished(page, url) {
-        console.log('All crawling finished');
+    function onAllFinished(page) {
+
+        if (!fs.existsSync("./editais/")) {
+            fs.mkdirSync("./editais/");
+        }
 
         arquivos.map(item => {
 
             if (item.url.indexOf(".pdf") && item.ref.indexOf("/edital-") > 0) {
-                console.log("alo");
-                const https = require('https');
-                const fs = require('fs');
 
-                if (!fs.existsSync("./editais/" + item.ref.slice(26))) {
-                    fs.mkdirSync("./editais/" + item.ref.slice(26));
-                } else {
-                    console.log("ja existe " + item.ref.slice(26))
+                if (!fs.existsSync(`./editais/${item.ref.slice(26)}`)) {
+                    fs.mkdirSync(`./editais/${item.ref.slice(26)}`);
                 }
 
-                const file = fs.createWriteStream("./editais/" + item.ref.slice(26) + "/" + item.url.slice(58));
-                const request = https.get(page.url, function (response) {
-                    response.pipe(file);
-
-                });
-
+                const file = fs.createWriteStream(`./editais/${item.ref.slice(26)}/${item.url.slice(58)}`);
+               if (!item.url.indexOf("127.0.0.1") > 0) {
+                https.get(page.url, response => response.pipe(file)).on("error", err => console.log(`Error: ${err.message}`));
+            }
+              
             };
 
         })
