@@ -38,7 +38,6 @@ crawler.crawl(
                     return
                 }
                 else {
-                    const file = fs.createWriteStream(`./editais/${item.ref.slice(26)}/${item.url.slice(58, -3)}.txt`);
                     fs.writeFile(`./editais/${item.ref.slice(26)}/${item.url.slice(58, -3)}.txt`, pages, function (erro) {
                         if (erro) {
                             throw erro;
