@@ -38,6 +38,7 @@ jspm_packages/
 editais/
 poppler-0.68.0/
 teste/
+api/node_modules/
 
 # TypeScript v1 declaration files
 typings/
